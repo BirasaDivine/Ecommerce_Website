@@ -1,75 +1,40 @@
-# React + TypeScript + Vite
+# E-Commerce Frontend Capstone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React t frontend for an e-commerce platform.
 
-Currently, two official plugins are available:
+Live demo: https://your-app-name.vercel.app 
+Repo: https://github.com/BirasaDivine/Ecommerce_Website
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+# Features
+- Product Listing : browse all products, search by name (keyword), and filter by maximum price
+- Product Detail : full product info, category/subcategory, and all active variants with price and stock status (IN_STOCK, LOW_STOCK, OUT_OF_STOCK)
+- Authentication : login page issuing a mock JWT; UI adapts based on decoded role (Public, User, Admin)
+- Buying : logged-in Users can select a variant and buy it; the Buy button is disabled for out-of-stock variants
+- Admin Management : Admins can create and edit products, including adding/editing/removing their variants
+# Tech Stack
+- React + TypeScript (via Vite)
+- Tailwind CSS for styling
+- React Router for routing
+- Mocked service layer (src/services/) simulating async API calls with latency, backed by static mock data (src/mocks/)
+# Getting Started
+bash
 ```
+git clone https://github.com/BirasaDivine/Ecommerce_Website
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+cd Ecommerce_Website
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+npm install
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+npm run dev
 ```
+App runs at http://localhost:5173.
+
+# Mock Accounts
+
+
+- User	: user@example.com ,	password123
+- Admin	: admin@example.com	, admin123
+
+# Deployment
+
+Deployed to Vercel, auto-building from the main branch.
