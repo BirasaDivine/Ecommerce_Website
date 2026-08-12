@@ -1,10 +1,10 @@
 import type { Role } from "../types/user";
 
 interface JwtPayload {
-  sub: string;      // user id
+  sub: string;     
   email: string;
   role: Role;
-  exp: number;       // expiry, unix seconds
+  exp: number;       
 }
 
 function base64UrlEncode(obj: object): string {
@@ -21,7 +21,7 @@ export function createMockJwt(payload: JwtPayload): string {
   const header = { alg: "HS256", typ: "JWT" };
   const encodedHeader = base64UrlEncode(header);
   const encodedPayload = base64UrlEncode(payload);
-  const fakeSignature = "mocksignature"; // not cryptographically real — frontend-only
+  const fakeSignature = "mocksignature"; 
   return `${encodedHeader}.${encodedPayload}.${fakeSignature}`;
 }
 
