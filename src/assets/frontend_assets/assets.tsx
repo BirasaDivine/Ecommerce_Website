@@ -1,3 +1,5 @@
+import type { Category, SubCategory } from "../../mocks/categories";
+
 import p_img1 from './p_img1.png'
 import p_img2_1 from './p_img2_1.png'
 import p_img2_2 from './p_img2_2.png'
@@ -74,7 +76,28 @@ import razorpay_logo from './razorpay_logo.png'
 import stripe_logo from './stripe_logo.png'
 import cross_icon from './cross_icon.png'
 
-export const assets = {
+export interface Assets {
+    logo: string;
+    hero_img: string;
+    cart_icon: string;
+    dropdown_icon: string;
+    exchange_icon: string;
+    profile_icon: string;
+    quality_icon: string;
+    search_icon: string;
+    star_dull_icon: string;
+    star_icon: string;
+    bin_icon: string;
+    support_img: string;
+    menu_icon: string;
+    about_img: string;
+    contact_img: string;
+    razorpay_logo: string;
+    stripe_logo: string;
+    cross_icon: string;
+}
+
+export const assets: Assets = {
     logo,
     hero_img,
     cart_icon,
@@ -95,7 +118,20 @@ export const assets = {
     cross_icon
 }
 
-export const products = [
+export interface MockProduct {
+    _id: string;
+    name: string;
+    description: string;
+    price: number;
+    image: string[];
+    category: Category;
+    subCategory: SubCategory;
+    sizes: string[];
+    date: number;
+    bestseller: boolean;
+}
+
+export const products: MockProduct[] = [
     {
         _id: "aaaaa",
         name: "Women Round Neck Cotton Top",
@@ -113,7 +149,7 @@ export const products = [
         name: "Men Round Neck Pure Cotton T-shirt",
         description: "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
         price: 200,
-        image: [p_img2_1,p_img2_2,p_img2_3,p_img2_4],
+        image: [p_img2_1, p_img2_2, p_img2_3, p_img2_4],
         category: "Men",
         subCategory: "Topwear",
         sizes: ["M", "L", "XL"],
