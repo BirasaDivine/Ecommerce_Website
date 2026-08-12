@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import { assets } from "../assets/frontend_assets/assets.js";
+import { assets } from "../assets/frontend_assets/assets";
 
 export default function NavBar(){
     const links =[

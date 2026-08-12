@@ -1,5 +1,5 @@
 
-import { assets } from "../assets/frontend_assets/assets.js";
+import { assets } from "../assets/frontend_assets/assets";
 export default function Hero(){
     
     return(
