@@ -1,9 +1,11 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/frontend_assets/assets";
 import { clearStoredAuth } from "../services/authStorage";
+import { useShopContext } from "../context/ShopContext";
 
 export default function NavBar(){
     const navigate = useNavigate();
+    const { showSearch, setShowSearch, getCartCount } = useShopContext();
     const links =[
         { to: "/", label: "Home" },
         { to: "/collection", label: "Collection" },
@@ -31,7 +33,12 @@ export default function NavBar(){
     </ul>
 
     <div className="flex items-center gap-6">
-      <img src={assets.search_icon} className="w-6 h-6 cursor-pointer" alt="Search" />
+      <img
+        src={assets.search_icon}
+        className="w-6 h-6 cursor-pointer"
+        alt="Search"
+        onClick={() => setShowSearch(!showSearch)}
+      />
 
       <div className="group relative">
         <Link to="/login">
@@ -54,6 +61,9 @@ export default function NavBar(){
 
       <Link to="/cart" className="relative">
         <img src={assets.cart_icon} className="w-6 min-w-5 h-6 cursor-pointer" alt="Cart" />
+        <p className="absolute right-[-5px] bottom-[-5px] w-4 h-4 flex items-center justify-center leading-none bg-black text-white rounded-full text-[8px]">
+          {getCartCount()}
+        </p>
       </Link>
 
       <img src={assets.menu_icon} className="w-6 h-6 cursor-pointer sm:hidden" alt="Menu" />
