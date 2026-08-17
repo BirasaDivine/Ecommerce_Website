@@ -5,9 +5,16 @@ import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 
 export default function Collection() {
-  const { products, getPrice } = useShopContext();
+  const { products, getPrice, search, showSearch } = useShopContext();
 
-  const prices: Record<string, number | null> = products.reduce((acc, product) => {
+  const visibleProducts =
+    showSearch && search
+      ? products.filter((product) =>
+          product.name.toLowerCase().includes(search.toLowerCase())
+        )
+      : products;
+
+  const prices: Record<string, number | null> = visibleProducts.reduce((acc, product) => {
     acc[product._id] = getPrice(product._id);
     return acc;
   }, {} as Record<string, number | null>);
@@ -60,7 +67,7 @@ export default function Collection() {
         </div>
 
         {/* Products */}
-        <ProductItem products={products} prices={prices} />
+        <ProductItem products={visibleProducts} prices={prices} />
       </div>
     </div>
   );
