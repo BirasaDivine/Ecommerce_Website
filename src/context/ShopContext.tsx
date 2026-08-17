@@ -22,6 +22,7 @@ interface ShopContextValue {
   getTotalAmount: () => number;
   getPrice: (productId: string) => number | null;
   getSizes: (productId: string) => string[];
+  getVariantPrice: (productId: string, size: string) => number;
   navigate: ReturnType<typeof useNavigate>;
 }
 
@@ -120,6 +121,7 @@ export default function ShopContextProvider({ children }: { children: ReactNode 
     getTotalAmount,
     getPrice,
     getSizes,
+    getVariantPrice,
     navigate,
   };
 
