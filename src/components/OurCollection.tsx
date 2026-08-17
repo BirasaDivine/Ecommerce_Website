@@ -1,17 +1,14 @@
 import Title from "./Title";
 import ProductItem from "./ProductItem";
-import { MOCK_PRODUCTS } from "../mocks/products";
-import { MOCK_VARIANTS } from "../mocks/variants";
-
-const prices: Record<string, number | null> = MOCK_PRODUCTS.reduce((acc, product) => {
-    const activePrices = MOCK_VARIANTS
-        .filter((variant) => variant.productId === product._id && variant.active)
-        .map((variant) => variant.price);
-    acc[product._id] = activePrices.length ? Math.min(...activePrices) : null;
-    return acc;
-}, {} as Record<string, number | null>);
+import { useShopContext } from "../context/ShopContext";
 
 export default function OurCollection(){
+    const { products, getPrice } = useShopContext();
+
+    const prices: Record<string, number | null> = products.reduce((acc, product) => {
+        acc[product._id] = getPrice(product._id);
+        return acc;
+    }, {} as Record<string, number | null>);
 
     return(
         <div className="my-10">
@@ -21,7 +18,7 @@ export default function OurCollection(){
           Here are some of our latest collections.
         </p>
       </div>
-      <ProductItem products={MOCK_PRODUCTS} prices={prices} />
+      <ProductItem products={products} prices={prices} />
     </div>
     )
 }
