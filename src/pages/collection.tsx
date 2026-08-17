@@ -1,19 +1,17 @@
 import { assets } from "../assets/frontend_assets/assets";
 import { CATEGORIES, SUB_CATEGORIES } from "../mocks/categories";
-import { MOCK_PRODUCTS } from "../mocks/products";
-import { MOCK_VARIANTS } from "../mocks/variants";
+import { useShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 
-const prices: Record<string, number | null> = MOCK_PRODUCTS.reduce((acc, product) => {
-  const activePrices = MOCK_VARIANTS
-    .filter((variant) => variant.productId === product._id && variant.active)
-    .map((variant) => variant.price);
-  acc[product._id] = activePrices.length ? Math.min(...activePrices) : null;
-  return acc;
-}, {} as Record<string, number | null>);
-
 export default function Collection() {
+  const { products, getPrice } = useShopContext();
+
+  const prices: Record<string, number | null> = products.reduce((acc, product) => {
+    acc[product._id] = getPrice(product._id);
+    return acc;
+  }, {} as Record<string, number | null>);
+
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t border-gray-300">
       {/* Filter Options */}
@@ -62,7 +60,7 @@ export default function Collection() {
         </div>
 
         {/* Products */}
-        <ProductItem products={MOCK_PRODUCTS} prices={prices} />
+        <ProductItem products={products} prices={prices} />
       </div>
     </div>
   );
