@@ -1,17 +1,14 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { MOCK_PRODUCTS } from "../mocks/products";
-import { MOCK_VARIANTS } from "../mocks/variants";
+import { useShopContext } from "../context/ShopContext";
 import { assets } from "../assets/frontend_assets/assets";
 
 export default function Product() {
   const { productId } = useParams();
-  const product = MOCK_PRODUCTS.find((p) => p._id === productId);
-  const variants = MOCK_VARIANTS.filter(
-    (v) => v.productId === productId && v.active
-  );
-  const sizes = [...new Set(variants.map((v) => v.size))];
-  const price = variants.length ? Math.min(...variants.map((v) => v.price)) : null;
+  const { products, currency, getPrice, getSizes, addToCart } = useShopContext();
+  const product = products.find((p) => p._id === productId);
+  const sizes = productId ? getSizes(productId) : [];
+  const price = productId ? getPrice(productId) : null;
 
   const [image, setImage] = useState(product?.image[0] ?? "");
   const [size, setSize] = useState("");
@@ -67,7 +64,7 @@ export default function Product() {
           </div>
 
           <p className="mt-5 text-3xl font-medium">
-            {price !== null ? `$${price}` : "Unavailable"}
+            {price !== null ? `${currency}${price}` : "Unavailable"}
           </p>
 
           <p className="mt-5 text-gray-500 md:w-4/5">{product.description}</p>
@@ -90,6 +87,7 @@ export default function Product() {
           </div>
 
           <button
+            onClick={() => addToCart(product._id, size)}
             disabled={!size}
             className="px-8 uppercase py-3 text-sm font-medium text-white bg-black active:bg-black/70 disabled:opacity-40 disabled:cursor-not-allowed"
           >
