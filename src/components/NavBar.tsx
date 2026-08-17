@@ -1,11 +1,19 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/frontend_assets/assets";
+import { clearStoredAuth } from "../services/authStorage";
 
 export default function NavBar(){
+    const navigate = useNavigate();
     const links =[
         { to: "/", label: "Home" },
         { to: "/collection", label: "Collection" },
     ]
+
+    const handleLogout = () => {
+        clearStoredAuth();
+        navigate("/login");
+    }
+
     return(
         <header className="border-b bg-white">
   <div className="flex items-center justify-between py-5 bg-white px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] font-medium">
@@ -32,7 +40,11 @@ export default function NavBar(){
         <div className="absolute top-6 right-0 bg-white hidden group-hover:block">
           <ul className="flex flex-col w-36 bg-slate-100 rounded overflow-hidden">
             {["Profile", "Orders", "Logout"].map((item) => (
-              <li key={item} className="px-9 py-2 hover:bg-gray-200 cursor-pointer hover:text-black transition-all duration-300">
+              <li
+                key={item}
+                onClick={item === "Logout" ? handleLogout : undefined}
+                className="px-9 py-2 hover:bg-gray-200 cursor-pointer hover:text-black transition-all duration-300"
+              >
                 {item}
               </li>
             ))}
