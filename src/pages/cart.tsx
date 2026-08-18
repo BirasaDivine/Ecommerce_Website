@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useShopContext } from "../context/ShopContext";
 import { assets } from "../assets/frontend_assets/assets";
@@ -15,19 +14,14 @@ export default function Cart() {
   const { products, currency, cartItems, updateQuantity, getVariantPrice } =
     useShopContext();
 
-  const [cartData, setCartData] = useState<CartLine[]>([]);
-
-  useEffect(() => {
-    const tempData: CartLine[] = [];
-    for (const itemId in cartItems) {
-      for (const size in cartItems[itemId]) {
-        if (cartItems[itemId][size] > 0) {
-          tempData.push({ _id: itemId, size, quantity: cartItems[itemId][size] });
-        }
+  const cartData: CartLine[] = [];
+  for (const itemId in cartItems) {
+    for (const size in cartItems[itemId]) {
+      if (cartItems[itemId][size] > 0) {
+        cartData.push({ _id: itemId, size, quantity: cartItems[itemId][size] });
       }
     }
-    setCartData(tempData);
-  }, [cartItems]);
+  }
 
   const handleRemove = (item: CartLine, productName: string) => {
     const confirmed = window.confirm(
