@@ -1,14 +1,12 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../services/authService";
-import { getStoredAuth, setStoredAuth, clearStoredAuth } from "../services/authStorage";
-import type { StoredAuth } from "../services/authStorage";
+import { useAuth } from "../context/AuthContext";
 import Title from "../components/Title";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [auth, setAuth] = useState<StoredAuth | null>(getStoredAuth);
+  const { user, role, isAuthenticated, login, logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -17,9 +15,7 @@ export default function Login() {
     e.preventDefault();
     setError("");
     try {
-      const result = await login(email, password);
-      setStoredAuth(result);
-      setAuth(result);
+      await login(email, password);
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -27,18 +23,18 @@ export default function Login() {
   };
 
   const handleLogout = () => {
-    clearStoredAuth();
-    setAuth(null);
+    logout();
     setEmail("");
     setPassword("");
   };
 
-  if (auth) {
+  if (isAuthenticated && user) {
     return (
       <div className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800">
         <Title text1="MY" text2="ACCOUNT" />
         <p className="text-sm text-gray-600">
-          Signed in as <span className="font-medium">{auth.user.email}</span>
+          Signed in as <span className="font-medium">{user.email}</span>{" "}
+          <span className="text-xs text-gray-400">({role})</span>
         </p>
         <button
           onClick={handleLogout}
