@@ -1,8 +1,8 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { MOCK_PRODUCTS } from "../mocks/products";
-import { MOCK_VARIANTS } from "../mocks/variants";
+import { listVariants } from "../mocks/productStore";
+import { getProducts } from "../services/productService";
 import type { Product } from "../types/product";
 
 export type CartItems = Record<string, Record<string, number>>;
@@ -23,11 +23,12 @@ interface ShopContextValue {
   getPrice: (productId: string) => number | null;
   getSizes: (productId: string) => string[];
   getVariantPrice: (productId: string, size: string) => number;
+  refreshProducts: () => Promise<void>;
   navigate: ReturnType<typeof useNavigate>;
 }
 
 function getActiveVariants(productId: string) {
-  return MOCK_VARIANTS.filter((v) => v.productId === productId && v.active);
+  return listVariants(productId).filter((v) => v.active);
 }
 
 function getPrice(productId: string): number | null {
@@ -40,9 +41,7 @@ function getSizes(productId: string): string[] {
 }
 
 function getVariantPrice(productId: string, size: string): number {
-  const variant = MOCK_VARIANTS.find(
-    (v) => v.productId === productId && v.size === size && v.active
-  );
+  const variant = getActiveVariants(productId).find((v) => v.size === size);
   return variant?.price ?? 0;
 }
 
@@ -59,10 +58,26 @@ export function useShopContext(): ShopContextValue {
 export default function ShopContextProvider({ children }: { children: ReactNode }) {
   const currency = "$";
   const deliveryFee = 10;
+  const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState<CartItems>({});
   const navigate = useNavigate();
+
+  const refreshProducts = async () => {
+    const data = await getProducts();
+    setProducts(data);
+  };
+
+  useEffect(() => {
+    let ignore = false;
+    getProducts().then((data) => {
+      if (!ignore) setProducts(data);
+    });
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const addToCart = (itemId: string, size: string) => {
     if (!size) return;
@@ -107,7 +122,7 @@ export default function ShopContextProvider({ children }: { children: ReactNode 
   };
 
   const value: ShopContextValue = {
-    products: MOCK_PRODUCTS,
+    products,
     currency,
     deliveryFee,
     search,
@@ -122,6 +137,7 @@ export default function ShopContextProvider({ children }: { children: ReactNode 
     getPrice,
     getSizes,
     getVariantPrice,
+    refreshProducts,
     navigate,
   };
 
