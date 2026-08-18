@@ -1,18 +1,20 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/frontend_assets/assets";
-import { clearStoredAuth } from "../services/authStorage";
 import { useShopContext } from "../context/ShopContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function NavBar(){
     const navigate = useNavigate();
     const { showSearch, setShowSearch, getCartCount } = useShopContext();
+    const { isAuthenticated, role, logout } = useAuth();
     const links =[
         { to: "/", label: "Home" },
         { to: "/collection", label: "Collection" },
+        ...(role === "ADMIN" ? [{ to: "/admin/products", label: "Admin" }] : []),
     ]
 
     const handleLogout = () => {
-        clearStoredAuth();
+        logout();
         navigate("/login");
     }
 
@@ -46,15 +48,18 @@ export default function NavBar(){
         </Link>
         <div className="absolute top-6 right-0 bg-white hidden group-hover:block">
           <ul className="flex flex-col w-36 bg-slate-100 rounded overflow-hidden">
-            {["Profile", "Orders", "Logout"].map((item) => (
+            {isAuthenticated ? (
               <li
-                key={item}
-                onClick={item === "Logout" ? handleLogout : undefined}
+                onClick={handleLogout}
                 className="px-9 py-2 hover:bg-gray-200 cursor-pointer hover:text-black transition-all duration-300"
               >
-                {item}
+                Logout
               </li>
-            ))}
+            ) : (
+              <li className="px-9 py-2 hover:bg-gray-200 cursor-pointer hover:text-black transition-all duration-300">
+                <Link to="/login">Login</Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>
