@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { assets } from "../assets/frontend_assets/assets";
 import { CATEGORIES, SUB_CATEGORIES } from "../mocks/categories";
 import { useShopContext } from "../context/ShopContext";
@@ -6,13 +7,23 @@ import ProductItem from "../components/ProductItem";
 
 export default function Collection() {
   const { products, getPrice, search, showSearch } = useShopContext();
+  const [maxPrice, setMaxPrice] = useState("");
 
-  const visibleProducts =
+  const searchedProducts =
     showSearch && search
       ? products.filter((product) =>
           product.name.toLowerCase().includes(search.toLowerCase())
         )
       : products;
+
+  const maxPriceValue = maxPrice === "" ? null : Number(maxPrice);
+  const visibleProducts =
+    maxPriceValue !== null && !Number.isNaN(maxPriceValue)
+      ? searchedProducts.filter((product) => {
+          const price = getPrice(product._id);
+          return price !== null && price <= maxPriceValue;
+        })
+      : searchedProducts;
 
   const prices: Record<string, number | null> = visibleProducts.reduce((acc, product) => {
     acc[product._id] = getPrice(product._id);
@@ -50,6 +61,19 @@ export default function Collection() {
               </p>
             ))}
           </div>
+        </div>
+
+        {/* Max Price Filter */}
+        <div className="border border-gray-300 pl-5 py-3 my-5">
+          <p className="mb-3 text-sm font-medium">MAX PRICE</p>
+          <input
+            type="number"
+            min={0}
+            placeholder="Any"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className="w-4/5 border border-gray-300 px-2 py-1 text-sm outline-none"
+          />
         </div>
       </div>
 
