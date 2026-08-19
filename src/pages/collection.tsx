@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { assets } from "../assets/frontend_assets/assets";
-import { CATEGORIES, SUB_CATEGORIES } from "../mocks/categories";
+import { CATEGORIES, SUB_CATEGORIES, type Category, type SubCategory } from "../mocks/categories";
 import { useShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
@@ -8,6 +8,20 @@ import ProductItem from "../components/ProductItem";
 export default function Collection() {
   const { products, getPrice, search, showSearch } = useShopContext();
   const [maxPrice, setMaxPrice] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [selectedSubCategories, setSelectedSubCategories] = useState<SubCategory[]>([]);
+
+  const toggleCategory = (cat: Category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  };
+
+  const toggleSubCategory = (sub: SubCategory) => {
+    setSelectedSubCategories((prev) =>
+      prev.includes(sub) ? prev.filter((s) => s !== sub) : [...prev, sub]
+    );
+  };
 
   const searchedProducts =
     showSearch && search
@@ -16,14 +30,26 @@ export default function Collection() {
         )
       : products;
 
+  const categoryFilteredProducts =
+    selectedCategories.length === 0
+      ? searchedProducts
+      : searchedProducts.filter((product) => selectedCategories.includes(product.category));
+
+  const subCategoryFilteredProducts =
+    selectedSubCategories.length === 0
+      ? categoryFilteredProducts
+      : categoryFilteredProducts.filter((product) =>
+          selectedSubCategories.includes(product.subCategory)
+        );
+
   const maxPriceValue = maxPrice === "" ? null : Number(maxPrice);
   const visibleProducts =
     maxPriceValue !== null && !Number.isNaN(maxPriceValue)
-      ? searchedProducts.filter((product) => {
+      ? subCategoryFilteredProducts.filter((product) => {
           const price = getPrice(product._id);
           return price !== null && price <= maxPriceValue;
         })
-      : searchedProducts;
+      : subCategoryFilteredProducts;
 
   const prices: Record<string, number | null> = visibleProducts.reduce((acc, product) => {
     acc[product._id] = getPrice(product._id);
@@ -45,7 +71,14 @@ export default function Collection() {
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {CATEGORIES.map((cat) => (
               <p key={cat} className="flex gap-2">
-                <input className="w-3" type="checkbox" value={cat} /> {cat}
+                <input
+                  className="w-3"
+                  type="checkbox"
+                  value={cat}
+                  checked={selectedCategories.includes(cat)}
+                  onChange={() => toggleCategory(cat)}
+                />{" "}
+                {cat}
               </p>
             ))}
           </div>
@@ -57,7 +90,14 @@ export default function Collection() {
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {SUB_CATEGORIES.map((sub) => (
               <p key={sub} className="flex gap-2">
-                <input className="w-3" type="checkbox" value={sub} /> {sub}
+                <input
+                  className="w-3"
+                  type="checkbox"
+                  value={sub}
+                  checked={selectedSubCategories.includes(sub)}
+                  onChange={() => toggleSubCategory(sub)}
+                />{" "}
+                {sub}
               </p>
             ))}
           </div>
