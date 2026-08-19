@@ -39,7 +39,12 @@ export default function NavBar(){
         src={assets.search_icon}
         className="w-6 h-6 cursor-pointer"
         alt="Search"
-        onClick={() => setShowSearch(!showSearch)}
+        onClick={() => {
+          if (!showSearch) {
+            navigate("/collection");
+          }
+          setShowSearch(!showSearch);
+        }}
       />
 
       <div className="group relative">
