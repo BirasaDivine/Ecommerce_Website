@@ -1,8 +1,8 @@
 # E-Commerce Frontend Capstone
 
-A React t frontend for an e-commerce platform.
+A React  frontend for an e-commerce platform.
 
-Live demo: https://your-app-name.vercel.app 
+Live demo: : https://ecommerce-website-git-dev-birasadivines-projects.vercel.app/
 Repo: https://github.com/BirasaDivine/Ecommerce_Website
 
 # Features
@@ -17,8 +17,8 @@ Repo: https://github.com/BirasaDivine/Ecommerce_Website
 - React Router for routing
 - Mocked service layer (src/services/) simulating async API calls with latency, backed by static mock data (src/mocks/)
 # Getting Started
-bash
-```
+
+```bash
 git clone https://github.com/BirasaDivine/Ecommerce_Website
 
 cd Ecommerce_Website
