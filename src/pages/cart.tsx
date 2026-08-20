@@ -71,15 +71,17 @@ export default function Cart() {
                   </div>
 
                   <input
-                    onChange={(e) =>
-                      e.target.value === "" || e.target.value === "0"
-                        ? null
-                        : updateQuantity(item._id, item.size, Number(e.target.value))
-                    }
-                    type="number"
-                    min={1}
-                    defaultValue={item.quantity}
-                    className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
+                    onChange={(e) =>{
+                      const value = e.target.value ;
+                      if (value === "") return ;
+                      const quantity= Number(value);
+                      if (Number.isNaN(quantity)) return;
+                      if (quantity <= 0) {
+                        updateQuantity(item._id, item.size, 0);
+                      } else {
+                        updateQuantity(item._id, item.size, quantity);
+                      }
+                    }}
                   />
 
                   <img
