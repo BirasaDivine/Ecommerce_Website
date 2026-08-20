@@ -86,15 +86,18 @@ function ProductView({ productId }: { productId: string }) {
   };
 
   return (
-    <div className="border-t-2 pt-4">
-      {/* Back Button */}
-      <p
-        onClick={() => window.history.back()}
-        className="px-4 py-3 mb-3 cursor-pointer flex items-center gap-2 border rounded-full w-fit bg-gray-100 hover:bg-gray-200 transition-all duration-300"
-      >
-        <span aria-hidden>←</span>
-        <span className="font-medium hidden sm:block">Go Back</span>
-      </p>
+      <div className="border-t-2 pt-4">
+       {/* Back Button */}
+        <button
+          type="button"
+          onClick={() => window.history.back()}
+          className="px-4 py-3 mb-3 cursor-pointer flex items-center gap-2 border rounded-full w-fit bg-gray-100 hover:bg-gray-200 transition-all duration-300"
+        >
+          <span aria-hidden>←</span>
+          <span className="font-medium hidden sm:block">Go Back</span>
+  
+        </button>
+
 
       <div className="flex gap-12 flex-col sm:flex-row">
         {/* Product Images */}
