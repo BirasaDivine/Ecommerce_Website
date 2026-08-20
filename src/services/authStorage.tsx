@@ -1,3 +1,4 @@
+import { json } from "stream/consumers";
 import type { User } from "../types/user";
 
 const AUTH_KEY = "vinba_auth";
@@ -9,7 +10,13 @@ export interface StoredAuth {
 
 export function getStoredAuth(): StoredAuth | null {
   const raw = localStorage.getItem(AUTH_KEY);
-  return raw ? JSON.parse(raw) : null;
+  if (!raw )return null;
+
+  try {
+    return JSON.parse(raw);
+  }catch {
+    return null;
+  }
 }
 
 export function setStoredAuth(auth: StoredAuth): void {
