@@ -12,9 +12,11 @@ function base64UrlEncode(obj: object): string {
   return btoa(json).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
+
 function base64UrlDecode(str: string): string {
-  const padded = str.replace(/-/g, "+").replace(/_/g, "/");
-  return atob(padded);
+  let base64 = str.replace(/-/g, "+").replace(/_/g, "/");
+  base64 += "=".repeat((4 - (base64.length % 4)) % 4);
+  return atob(base64);
 }
 
 export function createMockJwt(payload: JwtPayload): string {
