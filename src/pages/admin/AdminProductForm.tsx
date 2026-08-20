@@ -134,7 +134,11 @@ export default function AdminProductForm() {
 
       await refreshProducts();
       navigate("/admin/products");
-    } finally {
+    }
+      catch(err){
+        setError(err instanceof Error ? err.message : "Failed to save product");
+      }
+      finally {
       setSaving(false);
     }
   };
