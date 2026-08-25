@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProductById, getVariants } from "../services/productService";
 import { useShopContext } from "../context/ShopContext";
 import { useAuth } from "../context/AuthContext";
-import { STOCK_STATUS_CLASSES, STOCK_STATUS_LABELS } from "../utils/stockStatus";
-import type { Product } from "../types/product";
-import type { Variant } from "../types/variant";
+import { useProduct } from "../hooks/useProduct";
+import ProductImageGallery from "../components/product/ProductImageGallery";
+import VariantSelector from "../components/product/VariantSelector";
+import ProductDescription from "../components/product/ProductDescription";
 
 export default function Product() {
   const { productId } = useParams();
@@ -26,34 +26,9 @@ function ProductView({ productId }: { productId: string }) {
   const { currency, addToCart } = useShopContext();
   const { isAuthenticated } = useAuth();
 
-  const [status, setStatus] = useState<"loading" | "ready" | "not-found">("loading");
-  const [product, setProduct] = useState<Product | null>(null);
-  const [variants, setVariants] = useState<Variant[]>([]);
-  const [image, setImage] = useState("");
+  const { status, product, variants, image, setImage } = useProduct(productId);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [justAdded, setJustAdded] = useState(false);
-
-  useEffect(() => {
-    let ignore = false;
-
-    Promise.all([getProductById(productId), getVariants(productId)]).then(
-      ([productResult, variantResult]) => {
-        if (ignore) return;
-        if (!productResult) {
-          setStatus("not-found");
-          return;
-        }
-        setProduct(productResult);
-        setImage(productResult.image[0] ?? "");
-        setVariants(variantResult.filter((v) => v.active));
-        setStatus("ready");
-      }
-    );
-
-    return () => {
-      ignore = true;
-    };
-  }, [productId]);
 
   if (status === "loading") {
     return <div className="pt-10 text-center text-gray-500">Loading…</div>;
@@ -95,29 +70,18 @@ function ProductView({ productId }: { productId: string }) {
         >
           <span aria-hidden>←</span>
           <span className="font-medium hidden sm:block">Go Back</span>
-  
+
         </button>
 
 
       <div className="flex gap-12 flex-col sm:flex-row">
         {/* Product Images */}
-        <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
-          <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full">
-            {product.image.map((img, index) => (
-              <img
-                src={img}
-                alt={product.name}
-                key={index}
-                className="w-[24%] sm:w-full sm:mb-3 flex-shrink-0 object-contain cursor-pointer"
-                onClick={() => setImage(img)}
-              />
-            ))}
-          </div>
-
-          <div className="w-full sm:w-[80%]">
-            <img src={image} alt={product.name} className="w-full h-auto" />
-          </div>
-        </div>
+        <ProductImageGallery
+          images={product.image}
+          activeImage={image}
+          onSelect={setImage}
+          alt={product.name}
+        />
 
         {/* Product Info */}
         <div className="flex-1">
@@ -136,40 +100,12 @@ function ProductView({ productId }: { productId: string }) {
 
           <p className="mt-5 text-gray-500 md:w-4/5">{product.description}</p>
 
-          <div className="flex flex-col gap-3 my-8">
-            <p className="text-sm">Available Variants</p>
-            {variants.length === 0 && (
-              <p className="text-sm text-gray-400">No variants available.</p>
-            )}
-            <div className="flex flex-col gap-2 md:w-4/5">
-              {variants.map((v) => {
-                const outOfStock = v.stockStatus === "OUT_OF_STOCK";
-                const selected = selectedVariantId === v._id;
-                return (
-                  <button
-                    key={v._id}
-                    type="button"
-                    disabled={outOfStock}
-                    onClick={() => setSelectedVariantId(v._id)}
-                    className={`flex items-center justify-between gap-4 border rounded-md px-4 py-2 text-sm text-left transition-colors ${
-                      selected ? "border-orange-500" : "border-gray-300"
-                    } ${outOfStock ? "opacity-50 cursor-not-allowed" : "hover:border-gray-500"}`}
-                  >
-                    <span className="font-medium">{v.size}</span>
-                    <span>
-                      {currency}
-                      {v.price}
-                    </span>
-                    <span
-                      className={`text-xs border rounded-full px-2 py-0.5 ${STOCK_STATUS_CLASSES[v.stockStatus]}`}
-                    >
-                      {STOCK_STATUS_LABELS[v.stockStatus]}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <VariantSelector
+            variants={variants}
+            selectedVariantId={selectedVariantId}
+            onSelect={setSelectedVariantId}
+            currency={currency}
+          />
 
           {!isAuthenticated && (
             <p className="text-xs text-gray-500 mb-2">
@@ -204,15 +140,7 @@ function ProductView({ productId }: { productId: string }) {
         </div>
       </div>
 
-      {/* Description */}
-      <div className="mt-20">
-        <div className="flex">
-          <b className="border px-5 py-3 text-sm">Description</b>
-        </div>
-        <div className="flex flex-col gap-4 border p-6 text-sm text-gray-500">
-          <p>{product.description}</p>
-        </div>
-      </div>
+      <ProductDescription description={product.description} />
     </div>
   );
 }
